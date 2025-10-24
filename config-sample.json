@@ -1,0 +1,314 @@
+{
+  "Reports": [
+    {
+      "Type": "OnPrem",
+      "TargetServer": "http://reportserver/Reports",
+      "TargetFolderPath": "/PowerBI/Reports",
+      "FolderPath": "./Reports",
+      "Overwrite": true,
+      "DataSources": [
+        {
+          "Comment": "Global datasource - applies to all reports",
+          "Name": "SalesDB",
+          "Type": "SQL",
+          "ConnectionString": "Data Source=sql-server;Initial Catalog=SalesDB;Integrated Security=True",
+          "CredentialType": "Windows",
+          "UseDefaultCredentials": true
+        },
+        {
+          "Comment": "Only for SalesDashboard.pbix and RegionalSales.pbix",
+          "Reports": ["SalesDashboard.pbix", "RegionalSales.pbix"],
+          "Name": "CustomersDB",
+          "Type": "SQL",
+          "ConnectionString": "Data Source=sql-server;Initial Catalog=CustomersDB",
+          "CredentialType": "SQL",
+          "Username": "sqluser",
+          "Password": "password123"
+        },
+        {
+          "Comment": "Only for FinanceReport.pbix",
+          "Reports": ["FinanceReport.pbix"],
+          "Name": "FinanceDB",
+          "Type": "SQL",
+          "ConnectionString": "Data Source=sql-server;Initial Catalog=FinanceDB;Integrated Security=True",
+          "CredentialType": "Windows",
+          "UseDefaultCredentials": true
+        }
+      ],
+      "Permissions": [
+        {
+          "Comment": "Global permission - all reports accessible by ReportUsers",
+          "Principal": "DOMAIN\\ReportUsers",
+          "Role": "Browser"
+        },
+        {
+          "Comment": "Only SalesDashboard.pbix gets SalesTeam access",
+          "Reports": ["SalesDashboard.pbix"],
+          "Principal": "DOMAIN\\SalesTeam",
+          "Role": "Browser"
+        },
+        {
+          "Comment": "Only FinanceReport.pbix gets FinanceTeam access",
+          "Reports": ["FinanceReport.pbix"],
+          "Principal": "DOMAIN\\FinanceTeam",
+          "Role": "ContentManager"
+        },
+        {
+          "Comment": "Admins have access to all reports",
+          "Principal": "DOMAIN\\Admins",
+          "Role": "ContentManager"
+        }
+      ],
+      "Parameters": [
+        {
+          "Comment": "Global parameter - applies to all reports",
+          "Name": "Environment",
+          "Value": "Production"
+        },
+        {
+          "Comment": "Only for SalesDashboard.pbix",
+          "Reports": ["SalesDashboard.pbix"],
+          "Name": "Department",
+          "Value": "Sales"
+        },
+        {
+          "Comment": "Only for FinanceReport.pbix",
+          "Reports": ["FinanceReport.pbix"],
+          "Name": "FiscalYear",
+          "Value": "2024"
+        },
+        {
+          "Comment": "Only for RegionalSales.pbix and SalesDashboard.pbix",
+          "Reports": ["RegionalSales.pbix", "SalesDashboard.pbix"],
+          "Name": "Region",
+          "Value": "North America"
+        }
+      ],
+      "ReportMappings": [
+        {
+          "SourcePattern": "SalesDashboard.*\\.pbix",
+          "ReportTargetPath": "/PowerBI/Sales/Dashboard",
+          "Permissions": [
+            {
+              "Principal": "DOMAIN\\SalesTeam",
+              "Role": "Browser"
+            }
+          ],
+          "Parameters": [
+            {
+              "Name": "Department",
+              "Value": "Sales"
+            }
+          ]
+        },
+        {
+          "SourcePattern": "FinanceReport.*\\.pbix",
+          "TargetFolderPath": "/PowerBI/Finance",
+          "Permissions": [
+            {
+              "Principal": "DOMAIN\\FinanceTeam",
+              "Role": "Browser"
+            }
+          ]
+        },
+        {
+          "SourcePattern": "ExecutiveDashboard.*\\.pbix",
+          "ReportTargetPath": "/PowerBI/Executive/Dashboard"
+        }
+      ]
+    },
+    {
+      "Type": "Cloud",
+      "WorkspaceName": "Production Workspace",
+      "FolderPath": "./Reports",
+      "Overwrite": true,
+      "ServicePrincipal": true,
+      "TenantId": "your-tenant-id",
+      "ClientId": "your-client-id",
+      "ClientSecret": "your-client-secret",
+      "DataSources": [
+        {
+          "Comment": "Global datasource - all reports use this SalesDB",
+          "Name": "SalesDB",
+          "Type": "Sql",
+          "Server": "sql-server.database.windows.net",
+          "Database": "SalesDB",
+          "GatewayId": "gateway-id",
+          "DatasourceId": "datasource-id",
+          "Username": "sqluser",
+          "Password": "password123"
+        },
+        {
+          "Comment": "Only for ExecutiveDashboard.pbix",
+          "Reports": ["ExecutiveDashboard.pbix"],
+          "Name": "OnPremDB",
+          "Type": "Sql",
+          "Server": "onprem-sql-server",
+          "Database": "OnPremDB",
+          "GatewayId": "onprem-gateway-id",
+          "DatasourceId": "onprem-datasource-id",
+          "Username": "DOMAIN\\user",
+          "Password": "password123"
+        },
+        {
+          "Comment": "Only for FinanceReport.pbix",
+          "Reports": ["FinanceReport.pbix"],
+          "Name": "FinanceDB",
+          "Type": "Sql",
+          "Server": "finance-sql.database.windows.net",
+          "Database": "FinanceDB",
+          "Username": "financeuser",
+          "Password": "password123"
+        }
+      ],
+      "Permissions": [
+        {
+          "Comment": "Global - all users can view all reports",
+          "Principal": "user@company.com",
+          "AccessRight": "Viewer"
+        },
+        {
+          "Comment": "Only SalesDashboard.pbix - sales team access",
+          "Reports": ["SalesDashboard.pbix"],
+          "Principal": "salesteam@company.com",
+          "AccessRight": "Viewer"
+        },
+        {
+          "Comment": "Only FinanceReport.pbix - finance team access",
+          "Reports": ["FinanceReport.pbix"],
+          "Principal": "finance@company.com",
+          "AccessRight": "Member"
+        },
+        {
+          "Comment": "Global - admins have admin access to all",
+          "Principal": "admins@company.com",
+          "AccessRight": "Admin"
+        }
+      ],
+      "Parameters": [
+        {
+          "Comment": "Global parameter for all reports",
+          "Name": "Environment",
+          "Value": "Production"
+        },
+        {
+          "Comment": "Only for SalesDashboard.pbix",
+          "Reports": ["SalesDashboard.pbix"],
+          "Name": "Department",
+          "Value": "Sales"
+        },
+        {
+          "Comment": "Only for FinanceReport.pbix",
+          "Reports": ["FinanceReport.pbix"],
+          "Name": "FiscalYear",
+          "Value": "2024"
+        }
+      ],
+      "RefreshSchedule": [
+        {
+          "Comment": "Global refresh schedule for all reports",
+          "Enabled": true,
+          "Days": ["Monday", "Wednesday", "Friday"],
+          "Times": ["06:00"],
+          "TimeZone": "Eastern Standard Time",
+          "NotifyOnFailure": true,
+          "TriggerInitialRefresh": false
+        },
+        {
+          "Comment": "Aggressive refresh only for SalesDashboard.pbix",
+          "Reports": ["SalesDashboard.pbix"],
+          "Enabled": true,
+          "Days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "Times": ["06:00", "12:00", "18:00"],
+          "TimeZone": "Eastern Standard Time",
+          "NotifyOnFailure": true,
+          "TriggerInitialRefresh": true,
+          "WaitForRefresh": true,
+          "RefreshTimeout": 30
+        },
+        {
+          "Comment": "No refresh for ExecutiveDashboard.pbix",
+          "Reports": ["ExecutiveDashboard.pbix"],
+          "Enabled": false
+        }
+      ],
+      "ReportMappings": [
+        {
+          "SourcePattern": "SalesDashboard.*\\.pbix",
+          "ReportTargetPath": "Sales Dashboard - Production",
+          "Permissions": [
+            {
+              "Principal": "salesteam@company.com",
+              "AccessRight": "Viewer"
+            }
+          ]
+        },
+        {
+          "SourcePattern": "FinanceReport.*\\.pbix",
+          "ReportName": "Finance Report - Prod",
+          "Parameters": [
+            {
+              "Name": "FiscalYear",
+              "Value": "2024"
+            }
+          ]
+        },
+        {
+          "SourcePattern": "ExecutiveDashboard.*\\.pbix",
+          "ReportTargetPath": "Executive Dashboard"
+        }
+      ]
+    },
+    {
+      "Type": "OnPrem",
+      "TargetServer": "http://dev-reportserver/Reports",
+      "TargetFolderPath": "/PowerBI/Dev",
+      "FolderPath": "./Reports/Dev",
+      "Overwrite": true,
+      "DataSources": [
+        {
+          "Name": "SalesDB",
+          "Type": "SQL",
+          "ConnectionString": "Data Source=dev-sql;Initial Catalog=SalesDB_Dev;Integrated Security=True",
+          "CredentialType": "Windows",
+          "UseDefaultCredentials": true
+        }
+      ],
+      "ReportMappings": [
+        {
+          "SourcePattern": ".*\\.pbix",
+          "TargetFolderPath": "/PowerBI/Dev/AllReports"
+        }
+      ]
+    },
+    {
+      "Type": "Cloud",
+      "WorkspaceName": "Test Workspace",
+      "FolderPath": "./Reports/Test",
+      "Overwrite": true,
+      "ServicePrincipal": false,
+      "DataSources": [
+        {
+          "Name": "TestDB",
+          "Type": "Sql",
+          "Server": "test-sql.database.windows.net",
+          "Database": "TestDB"
+        }
+      ],
+      "RefreshSchedule": {
+        "Enabled": true,
+        "Days": ["Monday", "Wednesday", "Friday"],
+        "Times": ["08:00"],
+        "TimeZone": "UTC",
+        "NotifyOnFailure": false,
+        "TriggerInitialRefresh": false
+      },
+      "ReportMappings": [
+        {
+          "SourcePattern": ".*\\.pbix",
+          "ReportTargetPath": null
+        }
+      ]
+    }
+  ]
+}
